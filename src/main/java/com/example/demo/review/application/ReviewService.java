@@ -1,7 +1,6 @@
 package com.example.demo.review.application;
 
 import com.example.demo.review.application.dto.ReviewRequest;
-import com.example.demo.review.application.dto.ReviewResponseDTO;
 import com.example.demo.review.application.dto.ReviewUpdateRequest;
 import com.example.demo.review.application.dto.TagValues;
 import com.example.demo.review.domain.Review;
@@ -87,16 +86,6 @@ public class ReviewService {
         );
 
         reviewRepository.save(review);
-    }
-
-
-    public ReviewResponseDTO getOneById(final Long reviewId){
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(
-                        () -> new ReviewException.ReviewNotFoundException(reviewId)
-                );
-
-        return ReviewResponseDTO.of(review);
     }
 
     public Double getAverageStarRank(String placeID){

@@ -3,7 +3,7 @@ package com.example.demo.review.application.dto;
 
 import com.example.demo.review.domain.Review;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public record ReviewWithLike(Long reviewId,
                              String placeId,
@@ -12,12 +12,13 @@ public record ReviewWithLike(Long reviewId,
                              TagValues tagValues,
                              String nickName,
                              String spotId,
-                             LocalDateTime createdAt,
-                             LocalDateTime modifiedAt,
+                             String createdAt,
+                             String modifiedAt,
                              int likeCount,
-                             LocalDateTime visitingTime,
+                             String visitingTime,
                              Double stars) {
     public static ReviewWithLike of(final Review review, final int reviewCount) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
         return new ReviewWithLike(
                 review.getId(),
                 review.getSpot().getPlaceId(),
@@ -26,10 +27,10 @@ public record ReviewWithLike(Long reviewId,
                 TagValues.of(review.getTag()),
                 review.getUsers().getNickName(), // TODO : 여기 처리해야 함 (페치조인하게)
                 review.getSpot().getPlaceId(),
-                review.getCreatedDate(),
-                review.getModifiedDate(),
+                review.getCreatedDate().format(formatter),
+                review.getModifiedDate().format(formatter),
                 reviewCount,
-                review.getVisitingTime(),
+                review.getVisitingTime().format(formatter),
                 review.getStarRank().getValue()
         );
     }

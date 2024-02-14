@@ -98,7 +98,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/api/users/reviews/{review-id}")
-    @Operation(summary = "리뷰 삭제(리스트)", description = "작성자만 삭제 가능합니다")
+    @Operation(summary = "리뷰 삭제", description = "작성자만 삭제 가능합니다")
     public ResponseEntity<Void> deleteReview(@PathVariable("review-id") Long reviewId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         reviewService.deleteReview(reviewId, userDetails.getUsers().getId());
@@ -107,7 +107,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/api/main/test/reviews/{review-id}")
-    @Operation(summary = "리뷰 삭제(리스트)", description = "아무나 삭제 가능합니다(테스트용)")
+    @Operation(summary = "리뷰 삭제 테스트", description = "아무나 삭제 가능합니다(테스트용)")
     public ResponseEntity<Void> deleteReviewForTest(@PathVariable("review-id") Long reviewId) {
         reviewService.deleteReviewTest(reviewId);
 
