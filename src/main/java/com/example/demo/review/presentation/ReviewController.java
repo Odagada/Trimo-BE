@@ -10,8 +10,6 @@ import com.example.demo.review.domain.vo.ReviewId;
 import com.example.demo.review.domain.vo.Weather;
 import com.example.demo.review_like.application.ReviewLikeService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,16 +26,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "Review Controller", description = "리뷰 컨트롤러")
-@SecurityRequirement(name = "Bearer Authentication")
-public class ReviewController {
+public class ReviewController implements ReviewControllerSwagger {
     private final ReviewService reviewService;
     private final ReviewLikeService likeService;
 
     // 방문 날짜 (리뷰에)
 
     @PostMapping(value = "/api/users/spots/{spotId}/reviews", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "리뷰 쓰기", description = "리뷰를 작성합니다.")
     public ResponseEntity<Void> writeReview(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable String spotId,

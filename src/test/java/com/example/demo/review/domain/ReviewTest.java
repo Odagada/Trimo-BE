@@ -57,8 +57,6 @@ class ReviewTest {
 
     @Test
     void hashCodeTest() {
-        Review review1 = REVIEW;
-        Review review2 = REVIEW;
-        assertEquals(review1.hashCode(), review2.hashCode());
+        assertEquals(REVIEW.hashCode(), REVIEW.hashCode());
     }
 }
