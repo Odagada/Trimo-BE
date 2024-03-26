@@ -28,7 +28,7 @@ public record ReviewWithLike(Long reviewId,
                 review.getTitle().getValue(),
                 review.getContent().getValue(),
                 TagValues.of(review.getTag()),
-                review.getUsers().getNickName(), // TODO : 여기 처리해야 함 (페치조인하게)
+                review.getUsers().getNickName(),
                 review.getSpot().getDisplayName(),
                 DateUtils.parseTimeToString(review.getCreatedDate()),
                 DateUtils.parseTimeToString(review.getModifiedDate()),

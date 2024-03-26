@@ -28,10 +28,7 @@ public class ReviewLikeService {
             return;
         }
 
-        reviewLikeRepository.save(new ReviewLike(
-                userId,
-                reviewId.value()
-        ));
+        reviewLikeRepository.save(new ReviewLike(userId, reviewId.value()));
     }
 
     public void unlike(UserId userId, ReviewId reviewId) {
@@ -43,6 +40,7 @@ public class ReviewLikeService {
     public long getCount(ReviewId reviewId){
         return reviewLikeRepository.countReviewLikeByReviewId(reviewId.value());
     }
+
     public ReviewWithLike getOneWithLikes(final ReviewId reviewId){
         Review review = reviewService.findById(reviewId);
         return ReviewWithLike.of(review);
@@ -53,16 +51,7 @@ public class ReviewLikeService {
         List<ReviewListData> dataFromRepository = reviewService.findByLikes(order);
 
         return dataFromRepository.stream()
-                .map(
-                        data -> new ReviewListDTO(
-                                data.reviewId(),
-                                data.title().getValue(),
-                                TagValues.of(data.tagValues()),
-                                data.nickName(),
-                                DateUtils.parseTimeToString(data.visitingTime()),
-                                data.stars().getValue(),
-                                data.image())
-                )
+                .map(ReviewListDTO::of)
                 .toList();
     }
 

@@ -45,7 +45,7 @@ public class ReviewService {
 
 
     public Review findById(ReviewId reviewId) {
-        return reviewRepository.findById(reviewId.value())
+        return reviewRepository.findByIdWithMember(reviewId.value())
                 .orElseThrow(
                         () -> new ReviewException.ReviewNotFoundException(reviewId.value())
                 );
@@ -131,7 +131,7 @@ public class ReviewService {
         List<ReviewPhoto> newReviewPhotos;
 
         if (newImages != null) {
-            newReviewPhotos = Optional.ofNullable(newImages)
+            newReviewPhotos = Optional.of(newImages)
                     .map(imgList -> {
                         List<String> urls = s3Service.uploadFiles(newImages);
                         return urls.stream()
@@ -153,7 +153,6 @@ public class ReviewService {
                 StarRank.getInstance(stars),
                 spot,
                 reviewPhotos
-
         );
 
         reviewRepository.save(review);
@@ -163,12 +162,7 @@ public class ReviewService {
                                                 TagValues tagValues,
                                                 Integer month,
                                                 Integer hour) {
-        return reviewRepository.searchConditionTotal(
-                searchValue,
-                Tag.of(tagValues),
-                month,
-                hour
-        );
+        return reviewRepository.searchConditionTotal(searchValue, Tag.of(tagValues), month, hour);
     }
 
     public List<ReviewListDTO> getListWithSearchCondition(
@@ -179,7 +173,6 @@ public class ReviewService {
             Integer hour,
             int page
     ) {
-
         List<ReviewListData> dataFromRepository = reviewRepository.getListWithSearchCondition(
                 searchValue,
                 Tag.of(tagValues),
@@ -190,16 +183,7 @@ public class ReviewService {
         );
 
         return dataFromRepository.stream()
-                .map(
-                        data -> new ReviewListDTO(
-                                data.reviewId(),
-                                data.title().getValue(),
-                                TagValues.of(data.tagValues()),
-                                data.nickName(),
-                                DateUtils.parseTimeToString(data.visitingTime()),
-                                data.stars().getValue(),
-                                data.image())
-                )
+                .map(ReviewListDTO::of)
                 .toList();
     }
 
@@ -222,16 +206,7 @@ public class ReviewService {
         );
 
         return dataFromRepository.stream()
-                .map(
-                        data -> new ReviewListDTO(
-                                data.reviewId(),
-                                data.title().getValue(),
-                                TagValues.of(data.tagValues()),
-                                data.nickName(),
-                                DateUtils.parseTimeToString(data.visitingTime()),
-                                data.stars().getValue(),
-                                data.image())
-                )
+                .map(ReviewListDTO::of)
                 .toList();
     }
 
