@@ -1,5 +1,6 @@
 package com.example.demo.global.presentation;
 
+import com.example.demo.global.webHook.DiscordWebHook;
 import com.example.demo.review.exception.ReviewException;
 import com.example.demo.review.exception.StarException;
 import com.example.demo.review.exception.WeatherException;
@@ -14,10 +15,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @RestControllerAdvice
 @Log4j2
@@ -120,5 +124,28 @@ public class CustomExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(message));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public void sendExceptionToDiscord(Exception e, WebRequest webRequest) {
+        final String message = e.getMessage();
+        DiscordWebHook discordWebHook =
+                new DiscordWebHook(
+                        "\uD83D\uDEA8 에러 발생",
+                        message
+                                + "\n"
+                                + "### \uD83D\uDD56 발생 시간 \n"
+                                + LocalDateTime.now()
+                                + "\n"
+                                + "### 🔗 요청 URL\n"
+                                + webRequest.getDescription(false)
+                                + "\n"
+                                + "### 📄 Stack Trace\n"
+                                + "```\n"
+                                + Arrays.toString(e.getStackTrace()).substring(0,1000)
+                                + "\n```",
+                        0xFF0000
+                );
+        discordWebHook.jsonConverter();
     }
 }
