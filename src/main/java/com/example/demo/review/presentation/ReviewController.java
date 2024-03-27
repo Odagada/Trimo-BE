@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -176,12 +177,25 @@ public class ReviewController {
     }
 
     @DeleteMapping("/api/main/test/reviews/{review-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "테스트용 삭제", description = "아무나 삭제 가능합니다(테스트용)")
     public ResponseEntity<Void> deleteReviewForTest(@PathVariable("review-id") Long reviewId) {
+        reviewService.deleteReviewTest(reviewId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/admin/test/reviews/{review-id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "관리자용 삭제", description = "관리자용 삭제 api")
+    public ResponseEntity<Void> deleteReviewByAdmin(@PathVariable("review-id") Long reviewId,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("[admin 닉네임 : {}] 관리자용 삭제 api 호출", () -> userDetails.getUsers().getNickName());
+
         reviewService.deleteReviewTest(reviewId);
 
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/api/user/me/places")
     @Operation(summary = "내가 방문한 장소 목록", description = "내가 방문했던 모든 장소를 리턴합니다")
     public ResponseEntity<MyPlacesIds> getMyPlaceIds (@AuthenticationPrincipal CustomUserDetails userDetails) {
